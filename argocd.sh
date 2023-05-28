@@ -5,6 +5,9 @@ sudo apt update -y && sudo apt upgrade -y
 sudo apt-get install docker.io -y
 sudo usermod -aG docker $USER && newgrp docker
 
+ sleep 120
+
+
 if [ $? -eq 0 ]; then
     sleep 30
 
