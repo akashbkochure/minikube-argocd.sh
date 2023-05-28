@@ -27,7 +27,7 @@ minikube start --driver=docker
 
 minikube addons enable ingress
 
-kubectl --namespace ingress-nginx wait \
+kubectl wait --namespace kube-system \
     --for=condition=ready pod \
     --selector=app.kubernetes.io/component=controller \
     --timeout=120s
@@ -70,16 +70,15 @@ argocd account update-password
 
 sleep 30
 
-kubectl port-forward service/argocd-server -n argocd 8080:443 
+kubectl port-forward service/argocd-server -n argocd 8080:443 &
 
+sleep 5
 
 curl -I http://localhost:8080
 
-# sleep 5
+# Open http://localhost:8080 in your web browser
 
-# open http://localhost:8080
-
-# cd ..
+cd ..
 
 #######################
 # Destroy The Cluster #
