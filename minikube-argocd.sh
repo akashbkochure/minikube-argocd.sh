@@ -63,9 +63,9 @@ argocd login --insecure --username admin --password $PASS \
 
 echo $PASS
 
-# argocd account update-password
+argocd account update-password
 
-# open http://argocd.$INGRESS_HOST.nip.io
+open http://argocd.$INGRESS_HOST.nip.io
 
 # cd ..
 
