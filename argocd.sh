@@ -12,7 +12,7 @@ curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-
 sudo install minikube-linux-amd64 /usr/local/bin/minikube
 sudo snap install kubectl --classic
 
-sleep 30
+if [ $? -eq 0 ]; then
 
 
 ####################
