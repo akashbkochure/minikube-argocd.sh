@@ -40,6 +40,14 @@ export INGRESS_HOST=$(minikube ip)
 
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
+# Install Argo CD CLI
+curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+chmod +x /usr/local/bin/argocd
+
+# Wait for Argo CD resources to be available
+sleep 60
+
+
 ###################
 # Install Argo CD #
 ###################
@@ -56,6 +64,7 @@ helm upgrade --install argocd argo/argo-cd \
     --namespace argocd --create-namespace \
     --set server.ingress.hosts="{argocd.$INGRESS_HOST.nip.io}" \
     --values argo/argocd-values.yaml --wait
+    --disable-webhooks
 
 export PASS=$(kubectl --namespace argocd \
     get secret argocd-initial-admin-secret \
