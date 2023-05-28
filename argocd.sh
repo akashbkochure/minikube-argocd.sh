@@ -8,7 +8,7 @@ sleep 2
 sudo usermod -aG docker $USER
 
 if [ $? -eq 0 ]; then
-    sleep 10
+    sleep 5
 
     # Minikube & Kubectl Installation
     curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
@@ -18,7 +18,7 @@ if [ $? -eq 0 ]; then
     if [ $? -eq 0 ]; then
         minikube start --driver=docker
         
-        sleep 30
+        sleep 10
 
         ####################
         # Create a Cluster #
@@ -51,7 +51,7 @@ if [ $? -eq 0 ]; then
         sudo mv argocd /usr/local/bin/
 
         # Wait for Argo CD resources to be available
-        sleep 60
+        sleep 30
 
 
         ###################
