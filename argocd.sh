@@ -45,12 +45,14 @@ if [ $? -eq 0 ]; then
 
         curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
-        # Install Argo CD CLI
-        curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-        chmod +x /usr/local/bin/argocd
+       # Install Argo CD CLI
+        curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+        chmod +x argocd
+        sudo mv argocd /usr/local/bin/
 
         # Wait for Argo CD resources to be available
         sleep 60
+
 
         ###################
         # Install Argo CD #
