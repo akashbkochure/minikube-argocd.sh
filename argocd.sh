@@ -2,11 +2,11 @@
 
 # Docker Installation
 sudo apt update -y && sudo apt upgrade -y
+sleep 10
 sudo apt-get install docker.io -y
+sleep 30
 sudo usermod -aG docker $USER && newgrp docker
-
- sleep 120
-
+sleep 60
 
 if [ $? -eq 0 ]; then
     sleep 30
@@ -18,6 +18,8 @@ if [ $? -eq 0 ]; then
 
     if [ $? -eq 0 ]; then
         minikube start --driver=docker
+        
+        sleep 30
 
         ####################
         # Create a Cluster #
