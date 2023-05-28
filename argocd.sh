@@ -2,109 +2,82 @@
 
 # Docker Installation
 sudo apt update -y && sudo apt upgrade -y
-sleep 2
 sudo apt-get install docker.io -y
-sleep 2
 sudo usermod -aG docker $USER
 
-if [ $? -eq 0 ]; then
-    sleep 5
+# For Minikube & Kubectl
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+sudo snap install kubectl --classic
+minikube start --driver=docker
 
-    # Minikube & Kubectl Installation
-    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-    sudo install minikube-linux-amd64 /usr/local/bin/minikube
-    sudo snap install kubectl --classic
+# Source: https://gist.github.com/84324e2d6eb1e62e3569846a741cedea
 
-    if [ $? -eq 0 ]; then
-        minikube start --driver=docker
-        
-        sleep 10
+####################
+# Create a Cluster #
+####################
 
-        ####################
-        # Create a Cluster #
-        ####################
+# minikube start
 
-        # minikube start
+#############################
+# Deploy Ingress Controller #
+#############################
 
-        #############################
-        # Deploy Ingress Controller #
-        #############################
+minikube addons enable ingress
 
-        minikube addons enable ingress
+kubectl --namespace ingress-nginx wait \
+    --for=condition=ready pod \
+    --selector=app.kubernetes.io/component=controller \
+    --timeout=120s
 
-        kubectl wait --namespace kube-system \
-            --for=condition=ready pod \
-            --selector=app.kubernetes.io/component=controller \
-            --timeout=120s
+export INGRESS_HOST=$(minikube ip)
 
-        export INGRESS_HOST=$(minikube ip)
+###################
+# Install Helm    #
+###################
 
-        ###################
-        # Install Helm    #
-        ###################
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
-        curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+###################
+# Install Argo CD #
+###################
 
-       # Install Argo CD CLI
-        curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-        chmod +x argocd
-        sudo mv argocd /usr/local/bin/
+git clone https://github.com/vfarcic/devops-catalog-code.git
 
-        # Wait for Argo CD resources to be available
-        sleep 30
+cd devops-catalog-code
 
+git pull
 
-        ###################
-        # Install Argo CD #
-        ###################
+helm repo add argo https://argoproj.github.io/argo-helm
 
-        git clone https://github.com/vfarcic/devops-catalog-code.git
+helm upgrade --install argocd argo/argo-cd \
+    --namespace argocd --create-namespace \
+    --set server.ingress.hosts="{argocd.$INGRESS_HOST.nip.io}" \
+    --values argo/argocd-values.yaml --wait
 
-        cd devops-catalog-code
+export PASS=$(kubectl --namespace argocd \
+    get secret argocd-initial-admin-secret \
+    --output jsonpath="{.data.password}" | base64 -d)
 
-        git pull
+argocd login --insecure --username admin --password $PASS \
+    --grpc-web argocd.$INGRESS_HOST.nip.io
 
-        helm repo add argo https://argoproj.github.io/argo-helm
+echo $PASS
 
-        helm upgrade --install argocd argo/argo-cd \
-            --namespace argocd --create-namespace \
-            --set server.ingress.hosts="{argocd.$INGRESS_HOST.nip.io}" \
-            --values argo/argocd-values.yaml --wait \
-            --disable-webhooks
+argocd account update-password
 
-        export PASS=$(kubectl --namespace argocd \
-            get secret argocd-initial-admin-secret \
-            --output jsonpath="{.data.password}" | base64 -d)
+sleep 30
 
-        argocd login --insecure --username admin --password $PASS \
-            --grpc-web argocd.$INGRESS_HOST.nip.io
+kubectl port-forward service/argocd-server -n argocd 8080:443 &
 
-        echo $PASS
+sleep 2
 
-        argocd account update-password
+# open http://localhost:8080
 
-        sleep 30
+# cd ..
 
-        kubectl port-forward service/argocd-server -n argocd 8080:443 &
+#######################
+# Destroy The Cluster #
+#######################
 
-        sleep 5
-
-        curl -I http://localhost:8080
-
-        # Open http://localhost:8080 in your web browser
-
-        cd ..
-
-        #######################
-        # Destroy The Cluster #
-        #######################
-
-        # minikube delete
-    else
-        echo "Minikube and Kubectl installation failed. Please check the previous steps."
-        exit 1
-    fi
-else
-    echo "Docker installation failed. Please check the previous steps."
-    exit 1
-fi
+# minikube delete
