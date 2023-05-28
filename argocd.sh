@@ -66,11 +66,11 @@ echo $PASS
 
 argocd account update-password
 
-sleep 30
-
-kubectl port-forward service/argocd-server -n argocd 8080:443 &
-
 sleep 2
+
+# open http://argocd.$INGRESS_HOST.nip.io
+
+# kubectl port-forward service/argocd-server -n argocd 8080:443 &
 
 # open http://localhost:8080
 
