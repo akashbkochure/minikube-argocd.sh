@@ -5,7 +5,7 @@ sudo apt update -y && sudo apt upgrade -y
 sudo apt-get install docker.io -y
 sudo usermod -aG docker $USER && newgrp docker
 
-sleep 15
+sleep 30
 
 # For Minikube & Kubectl
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
@@ -70,7 +70,10 @@ argocd account update-password
 
 sleep 30
 
-kubectl port-forward service/argocd-server -n argocd 8080:443 &
+kubectl port-forward service/argocd-server -n argocd 8080:443 
+
+
+curl -I http://localhost:8080
 
 # sleep 5
 
