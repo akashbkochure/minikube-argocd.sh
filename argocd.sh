@@ -11,15 +11,17 @@ sleep 30
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 sudo install minikube-linux-amd64 /usr/local/bin/minikube
 sudo snap install kubectl --classic
-minikube start --driver=docker
 
-# Source: https://gist.github.com/84324e2d6eb1e62e3569846a741cedea
+sleep 30
+
 
 ####################
 # Create a Cluster #
 ####################
 
-# minikube start
+# minikube start #
+
+minikube start --driver=docker
 
 #############################
 # Deploy Ingress Controller #
