@@ -6,7 +6,7 @@ sleep 10
 sudo apt-get install docker.io -y
 sleep 30
 sudo usermod -aG docker $USER && newgrp docker
-sleep 60
+sudo service docker restart
 
 if [ $? -eq 0 ]; then
     sleep 30
