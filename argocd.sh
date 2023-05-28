@@ -2,14 +2,13 @@
 
 # Docker Installation
 sudo apt update -y && sudo apt upgrade -y
-sleep 10
+sleep 2
 sudo apt-get install docker.io -y
-sleep 30
-sudo usermod -aG docker $USER && exec newgrp docker
-sudo service docker restart
+sleep 2
+sudo usermod -aG docker $USER
 
 if [ $? -eq 0 ]; then
-    sleep 30
+    sleep 10
 
     # Minikube & Kubectl Installation
     curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
