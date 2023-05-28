@@ -32,6 +32,12 @@ kubectl --namespace ingress-nginx wait \
 export INGRESS_HOST=$(minikube ip)
 
 ###################
+# Install Helm    #
+###################
+
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+###################
 # Install Argo CD #
 ###################
 
